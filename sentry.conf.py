@@ -136,7 +136,7 @@ if redis:
 ################
 
 # You MUST configure the absolute URI root for Sentry:
-SENTRY_URL_PREFIX = 'http://sentry.example.com'  # No trailing slash!
+SENTRY_URL_PREFIX = os.getenv('SENTRY_URL_PREFIX')  # No trailing slash!
 
 # If you're using a reverse proxy, you should enable the X-Forwarded-Proto
 # and X-Forwarded-Host headers, and uncomment the following settings
@@ -162,11 +162,11 @@ SENTRY_WEB_OPTIONS = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_PASSWORD = ''
-EMAIL_HOST_USER = ''
-EMAIL_PORT = 25
-EMAIL_USE_TLS = False
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_USE_TLS = int(os.getenv('EMAIL_USE_TLS')) > 0
 
 # The email address to send on behalf of
 SERVER_EMAIL = 'root@localhost'
@@ -177,29 +177,29 @@ SERVER_EMAIL = 'root@localhost'
 
 # If this file ever becomes compromised, it's important to regenerate your SECRET_KEY
 # Changing this value will result in all current sessions being invalidated
-SECRET_KEY = 'QqD2ncal7vLDnMLNliLdCN9uRqLujMiXIrOlSYsXvKeSPkyeYQwEXg=='
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # http://twitter.com/apps/new
 # It's important that input a callback URL, even if its useless. We have no idea why, consult Twitter.
-TWITTER_CONSUMER_KEY = ''
-TWITTER_CONSUMER_SECRET = ''
+TWITTER_CONSUMER_KEY = os.getenv('TWITTER_CONSUMER_KEY')
+TWITTER_CONSUMER_SECRET = os.getenv('TWITTER_CONSUMER_SECRET')
 
 # http://developers.facebook.com/setup/
-FACEBOOK_APP_ID = ''
-FACEBOOK_API_SECRET = ''
+FACEBOOK_APP_ID = os.getenv('FACEBOOK_APP_ID')
+FACEBOOK_API_SECRET = os.getenv('FACEBOOK_API_SECRET')
 
 # http://code.google.com/apis/accounts/docs/OAuth2.html#Registering
-GOOGLE_OAUTH2_CLIENT_ID = ''
-GOOGLE_OAUTH2_CLIENT_SECRET = ''
+GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID')
+GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET')
 
 # https://github.com/settings/applications/new
-GITHUB_APP_ID = ''
-GITHUB_API_SECRET = ''
+GITHUB_APP_ID = os.getenv('GITHUB_APP_ID')
+GITHUB_API_SECRET = os.getenv('GITHUB_API_SECRET')
 
 # https://trello.com/1/appKey/generate
-TRELLO_API_KEY = ''
-TRELLO_API_SECRET = ''
+TRELLO_API_KEY = os.getenv('TRELLO_API_KEY')
+TRELLO_API_SECRET = os.getenv('TRELLO_API_SECRET')
 
 # https://confluence.atlassian.com/display/BITBUCKET/OAuth+Consumers
-BITBUCKET_CONSUMER_KEY = ''
-BITBUCKET_CONSUMER_SECRET = ''
+BITBUCKET_CONSUMER_KEY = os.getenv('BITBUCKET_CONSUMER_KEY')
+BITBUCKET_CONSUMER_SECRET = os.getenv('BITBUCKET_CONSUMER_SECRET')
