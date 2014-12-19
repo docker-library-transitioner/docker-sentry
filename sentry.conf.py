@@ -162,14 +162,14 @@ SENTRY_WEB_OPTIONS = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
-EMAIL_USE_TLS = int(os.getenv('EMAIL_USE_TLS')) > 0
+EMAIL_HOST = os.getenv('EMAIL_HOST' or 'localhost')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD' or '')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER' or '')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT') or 25)
+EMAIL_USE_TLS = int(os.getenv('EMAIL_USE_TLS') or 0) > 0
 
 # The email address to send on behalf of
-SERVER_EMAIL = 'root@localhost'
+SERVER_EMAIL = os.getenv('SERVER_EMAIL' or 'root@localhost')
 
 ###########
 ## etc. ##
