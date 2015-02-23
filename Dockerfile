@@ -13,12 +13,12 @@ RUN pip install python-memcached
 # You'll need to install the required dependencies for Redis buffers:
 RUN pip install redis hiredis nydus
 
-ENV SENTRY_VERSION 6.4.4
+ENV SENTRY_VERSION 7.3.2
 
 RUN pip install sentry==$SENTRY_VERSION
 
-COPY sentry.conf.py /home/user/.sentry/
-RUN chown -R user:user /home/user/.sentry # TODO this might not work on AUFS sometimes
+RUN mkdir -p /home/user/.sentry \
+	&& chown -R user:user /home/user/.sentry
 
 USER user
 EXPOSE 9000
