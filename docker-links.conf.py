@@ -19,7 +19,7 @@ if postgres:
                 or os.getenv('POSTGRES_ENV_POSTGRES_PASSWORD')
                 or ''
             ),
-            'HOST': 'postgres',
+            'HOST': postgres,
             'PORT': '',
             'OPTIONS': {
                 'autocommit': True,
@@ -46,7 +46,7 @@ elif mysql:
                 or os.getenv('MYSQL_ENV_MYSQL_ROOT_PASSWORD')
                 or ''
             ),
-            'HOST': 'mysql',
+            'HOST': mysql,
             'PORT': '',
         },
     }
