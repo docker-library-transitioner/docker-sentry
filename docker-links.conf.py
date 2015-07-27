@@ -81,12 +81,12 @@ if redis:
     SENTRY_REDIS_OPTIONS = {
         'hosts': {
             0: {
-                'host': 'redis',
+                'host': redis,
                 'port': 6379,
             },
         },
     }
-    BROKER_URL = 'redis://redis:6379'
+    BROKER_URL = 'redis://' + redis + ':6379'
 else:
     raise Exception('Error: REDIS_PORT_6379_TCP_ADDR is undefined, did you forget to `--link` a redis container?')
 
