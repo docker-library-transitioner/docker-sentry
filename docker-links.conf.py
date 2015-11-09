@@ -1,3 +1,12 @@
+_generic_env_settings_prefix = '_SENTRY_'
+_generic_env_eval_settings_prefix = '_SENTRY_EVAL_'
+
+for _k, _v in os.environ.items():
+    if _k.startswith(_generic_env_eval_settings_prefix):
+        locals()[_k.replace(_generic_env_eval_settings_prefix, '')] = eval(_v)
+    elif _k.startswith(_generic_env_settings_prefix):
+        locals()[_k.replace(_generic_env_settings_prefix, '')] = _v
+
 postgres = os.getenv('SENTRY_POSTGRES_HOST') or (os.getenv('POSTGRES_PORT_5432_TCP_ADDR') and 'postgres')
 mysql = os.getenv('SENTRY_MYSQL_HOST') or (os.getenv('MYSQL_PORT_3306_TCP_ADDR') and 'mysql')
 redis = os.getenv('SENTRY_REDIS_HOST') or (os.getenv('REDIS_PORT_6379_TCP_ADDR') and 'redis')
