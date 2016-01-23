@@ -21,6 +21,7 @@
 #  SENTRY_EMAIL_USE_TLS
 #  SENTRY_MAILGUN_API_KEY
 #  SENTRY_SECRET_KEY
+#  SENTRY_MULTI_ORGANIZATION
 from sentry.conf.server import *  # NOQA
 
 import os
@@ -72,7 +73,7 @@ SENTRY_USE_BIG_INTS = True
 
 # Instruct Sentry that this install intends to be run by a single organization
 # and thus various UI optimizations should be enabled.
-SENTRY_SINGLE_ORGANIZATION = True
+SENTRY_SINGLE_ORGANIZATION = False if os.environ.get('SENTRY_MULTI_ORGANIZATION') == 'yes' else True
 
 #########
 # Redis #
