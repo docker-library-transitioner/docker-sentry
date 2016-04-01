@@ -244,7 +244,7 @@ secret_key = os.environ.get('SENTRY_SECRET_KEY')
 if not secret_key:
     raise Exception('Error: SENTRY_SECRET_KEY is undefined, run `generate-secret-key` and set to -e SENTRY_SECRET_KEY')
 
-if len(secret_key) < 32:
+if 'SENTRY_RUNNING_UWSGI' not in os.environ and len(secret_key) < 32:
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     print('!!                    CAUTION                       !!')
     print('!! Your SENTRY_SECRET_KEY is potentially insecure.  !!')

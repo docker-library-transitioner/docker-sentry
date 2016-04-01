@@ -90,15 +90,19 @@ if not redis:
 redis_port = os.environ.get('SENTRY_REDIS_PORT') or '6379'
 redis_db = os.environ.get('SENTRY_REDIS_DB') or '0'
 
-SENTRY_REDIS_OPTIONS = {
-    'hosts': {
-        0: {
-            'host': redis,
-            'port': redis_port,
-            'db': redis_db,
+SENTRY_OPTIONS.update({
+    'redis.clusters': {
+        'default': {
+            'hosts': {
+                0: {
+                    'host': redis,
+                    'port': redis_port,
+                    'db': redis_db,
+                },
+            },
         },
     },
-}
+})
 
 #########
 # Cache #
@@ -123,7 +127,6 @@ if memcached:
 
 # A primary cache is required for things such as processing events
 SENTRY_CACHE = 'sentry.cache.redis.RedisCache'
-SENTRY_CACHE_OPTIONS = SENTRY_REDIS_OPTIONS
 
 #########
 # Queue #
@@ -216,22 +219,19 @@ SENTRY_WEB_OPTIONS = {
 # Mail Server #
 ###############
 
-# For more information check Django's documentation:
-# https://docs.djangoproject.com/en/1.6/topics/email/
-
 email = os.environ.get('SENTRY_EMAIL_HOST') or (os.environ.get('SMTP_PORT_25_TCP_ADDR') and 'smtp')
 if email:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = email
-    EMAIL_HOST_PASSWORD = os.environ.get('SENTRY_EMAIL_PASSWORD') or ''
-    EMAIL_HOST_USER = os.environ.get('SENTRY_EMAIL_USER') or ''
-    EMAIL_PORT = int(os.environ.get('SENTRY_EMAIL_PORT') or 25)
-    EMAIL_USE_TLS = Bool(os.environ.get('SENTRY_EMAIL_USE_TLS', False))
+    SENTRY_OPTIONS['mail.backend'] = 'smtp'
+    SENTRY_OPTIONS['mail.host'] = email
+    SENTRY_OPTIONS['mail.password'] = os.environ.get('SENTRY_EMAIL_PASSWORD') or ''
+    SENTRY_OPTIONS['mail.username'] = os.environ.get('SENTRY_EMAIL_USER') or ''
+    SENTRY_OPTIONS['mail.port'] = int(os.environ.get('SENTRY_EMAIL_PORT') or 25)
+    SENTRY_OPTIONS['mail.use-tls'] = Bool(os.environ.get('SENTRY_EMAIL_USE_TLS', False))
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+    SENTRY_OPTIONS['mail.backend'] = 'dummy'
 
 # The email address to send on behalf of
-SERVER_EMAIL = os.environ.get('SENTRY_SERVER_EMAIL') or 'root@localhost'
+SENTRY_OPTIONS['mail.from'] = os.environ.get('SENTRY_SERVER_EMAIL') or 'root@localhost'
 
 # If you're using mailgun for inbound mail, set your API key and configure a
 # route to forward to /api/hooks/mailgun/inbound/
@@ -240,14 +240,16 @@ MAILGUN_API_KEY = os.environ.get('SENTRY_MAILGUN_API_KEY') or ''
 # If this value ever becomes compromised, it's important to regenerate your
 # SENTRY_SECRET_KEY. Changing this value will result in all current sessions
 # being invalidated.
-SECRET_KEY = os.environ.get('SENTRY_SECRET_KEY')
-if not SECRET_KEY:
+secret_key = os.environ.get('SENTRY_SECRET_KEY')
+if not secret_key:
     raise Exception('Error: SENTRY_SECRET_KEY is undefined, run `generate-secret-key` and set to -e SENTRY_SECRET_KEY')
 
-if len(SECRET_KEY) < 32:
-    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    print('!!                CAUTION                    !!')
-    print('!! Your SECRET_KEY is potentially insecure.  !!')
-    print('!! We recommend at least 32 characters long. !!')
-    print('!!  Regenerate with `generate-secret-key`.   !!')
-    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+if 'SENTRY_RUNNING_UWSGI' not in os.environ and len(secret_key) < 32:
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    print('!!                    CAUTION                       !!')
+    print('!! Your SENTRY_SECRET_KEY is potentially insecure.  !!')
+    print('!!    We recommend at least 32 characters long.     !!')
+    print('!!     Regenerate with `generate-secret-key`.       !!')
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+
+SENTRY_OPTIONS['system.secret-key'] = secret_key
