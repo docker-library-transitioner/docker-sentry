@@ -1,0 +1,44 @@
+redis:
+  image: redis:latest
+  ports:
+    - "6379:6379"
+
+mysql:
+  image: mysql:5.5
+  ports:
+    - "3306:3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=passowrd
+    - MYSQL_USER=sentry
+    - MYSQL_PASSWORD=password
+    - MYSQL_DATABASE=sentry
+  command: docker-entrypoint.sh --character-set-server=utf8 --collation-server=utf8_unicode_ci
+
+sentry-mysql:
+#  build: /home/maven/docker-sentry/8.3
+  image: sentry_sentry-mysql
+  ports:
+    - "8080:9000"
+  environment:
+    - SENTRY_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  links:
+    - redis:redis
+    - mysql:mysql
+
+sentry-mysql-celery-beat:
+  image: sentry_sentry-mysql
+  environment:
+    - SENTRY_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  links:
+    - redis:redis
+    - mysql:mysql
+  command: sentry celery beat
+
+sentry-mysql-celery-worker:
+  image: sentry_sentry-mysql
+  environment:
+    - SENTRY_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  links:
+    - redis:redis
+    - mysql:mysql
+  command: sentry celery worker

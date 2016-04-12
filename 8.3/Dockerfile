@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxml2-dev \
         libxslt-dev \
         libyaml-dev \
+        libmysqlclient-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Sane defaults for pip
@@ -17,7 +18,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
 ENV SENTRY_VERSION 8.3.2
 
-RUN pip install sentry==$SENTRY_VERSION
+RUN pip install sentry==$SENTRY_VERSION  mysqlclient==1.3.7
 
 ENV SENTRY_CONF=/etc/sentry \
     SENTRY_FILESTORE_DIR=/var/lib/sentry/files

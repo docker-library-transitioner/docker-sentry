@@ -31,7 +31,8 @@ import os.path
 
 CONF_ROOT = os.path.dirname(__file__)
 
-postgres = os.environ.get('SENTRY_POSTGRES_HOST') or (os.environ.get('POSTGRES_PORT_5432_TCP_ADDR') and 'postgres')
+mysql = os.environ.get('SENTRY_MYSQL_HOST') or os.environ.get('MYSQL_PORT_3306_TCP_ADDR')
+postgres = os.environ.get('SENTRY_POSTGRES_HOST') or os.environ.get('POSTGRES_PORT_5432_TCP_ADDR')
 if postgres:
     DATABASES = {
         'default': {
@@ -55,6 +56,34 @@ if postgres:
             'PORT': (
                 os.environ.get('SENTRY_POSTGRES_PORT')
                 or ''
+            ),
+            'OPTIONS': {
+                'autocommit': True,
+            },
+        },
+    }
+elif mysql:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': (
+                os.environ.get('SENTRY_DB_NAME')
+                or os.environ.get('MYSQL_ENV_MYSQL_DATABASE')
+                or 'sentry'
+            ),
+            'USER': (
+                os.environ.get('SENTRY_DB_USER')
+                or os.environ.get('MYSQL_ENV_MYSQL_USER')
+                or 'remote'
+            ),
+            'PASSWORD': (
+                os.environ.get('SENTRY_DB_PASSWORD')
+                or os.environ.get('MYSQL_ENV_MYSQL_PASSWORD')
+                or ''
+            ),
+            'HOST': mysql,
+            'PORT': (
+                os.environ.get('SENTRY_MYSQL_PORT') or ''
             ),
             'OPTIONS': {
                 'autocommit': True,
