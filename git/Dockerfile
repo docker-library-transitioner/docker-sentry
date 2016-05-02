@@ -34,6 +34,9 @@ RUN set -ex \
 ENV NODE_VERSION 0.12.13
 ENV NPM_VERSION 2.15.4
 
+# Support for RabbitMQ
+RUN pip install librabbitmq==1.6.1
+
 ARG SENTRY_BUILD=master
 ENV SENTRY_BUILD $SENTRY_BUILD
 
