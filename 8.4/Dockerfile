@@ -15,7 +15,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV PIP_NO_CACHE_DIR off
 ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
-ENV SENTRY_VERSION 8.2.5
+# grab tini for signal processing and zombie killing
+ENV TINI_VERSION v0.9.0
+RUN set -x \
+    && curl -o /usr/local/bin/tini -sSL "https://github.com/krallin/tini/releases/download/$TINI_VERSION/tini" \
+    && curl -o /usr/local/bin/tini.asc -sSL "https://github.com/krallin/tini/releases/download/$TINI_VERSION/tini.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 6380DC428747F6C393FEACA59A84159D7001A4E5 \
+    && gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini \
+    && rm -r "$GNUPGHOME" /usr/local/bin/tini.asc \
+    && chmod +x /usr/local/bin/tini \
+    && tini -h
+
+# Support for RabbitMQ
+RUN pip install librabbitmq==1.6.1
+
+ENV SENTRY_VERSION 8.4.0
 
 RUN pip install sentry==$SENTRY_VERSION
 
@@ -36,4 +51,4 @@ EXPOSE 9000
 VOLUME /var/lib/sentry/files
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["start"]
+CMD ["run", "web"]
