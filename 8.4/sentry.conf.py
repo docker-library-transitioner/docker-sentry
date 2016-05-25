@@ -266,7 +266,7 @@ SENTRY_OPTIONS['mail.mailgun-api-key'] = env('SENTRY_MAILGUN_API_KEY') or ''
 
 # If you specify a MAILGUN_API_KEY, you definitely want EMAIL_REPLIES
 if SENTRY_OPTIONS['mail.mailgun-api-key']:
-    SENTRY_OPTIONS['mail.enable=replies'] = True
+    SENTRY_OPTIONS['mail.enable-replies'] = True
 else:
     SENTRY_OPTIONS['mail.enable-replies'] = Bool(env('SENTRY_ENABLE_EMAIL_REPLIES', False))
 
