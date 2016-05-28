@@ -10,6 +10,7 @@
 #  SENTRY_REDIS_HOST
 #  SENTRY_REDIS_PORT
 #  SENTRY_REDIS_DB
+#  SENTRY_REDIS_PASSWORD
 #  SENTRY_MEMCACHED_HOST
 #  SENTRY_MEMCACHED_PORT
 #  SENTRY_FILESTORE_DIR
@@ -91,6 +92,7 @@ if not redis:
 
 redis_port = os.environ.get('SENTRY_REDIS_PORT') or '6379'
 redis_db = os.environ.get('SENTRY_REDIS_DB') or '0'
+redis_password = os.environ.get('SENTRY_REDIS_PASSWORD') or ''
 
 SENTRY_OPTIONS.update({
     'redis.clusters': {
@@ -100,6 +102,7 @@ SENTRY_OPTIONS.update({
                     'host': redis,
                     'port': redis_port,
                     'db': redis_db,
+                    'password': redis_password,
                 },
             },
         },
@@ -139,7 +142,7 @@ SENTRY_CACHE = 'sentry.cache.redis.RedisCache'
 # on a Python framework called Celery to manage queues.
 
 CELERY_ALWAYS_EAGER = False
-BROKER_URL = 'redis://' + redis + ':' + redis_port + '/' + redis_db
+BROKER_URL = 'redis://:' + redis_password + '@' + redis + ':' + redis_port + '/' + redis_db
 
 ###############
 # Rate Limits #
