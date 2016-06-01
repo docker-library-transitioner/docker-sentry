@@ -28,6 +28,7 @@
 #  SENTRY_MAILGUN_API_KEY
 #  SENTRY_SINGLE_ORGANIZATION
 #  SENTRY_SECRET_KEY
+#  SENTRY_ALLOW_REGISTRATION
 from sentry.conf.server import *  # NOQA
 from sentry.utils.types import Bool
 
@@ -82,6 +83,13 @@ SENTRY_USE_BIG_INTS = True
 # Instruct Sentry that this install intends to be run by a single organization
 # and thus various UI optimizations should be enabled.
 SENTRY_SINGLE_ORGANIZATION = Bool(env('SENTRY_SINGLE_ORGANIZATION', True))
+
+##################
+# Authentication #
+##################
+
+# You can disable user registration by setting this value to false
+SENTRY_FEATURES['auth:register'] = Bool(env('SENTRY_ALLOW_REGISTRATION', True))
 
 #########
 # Redis #
