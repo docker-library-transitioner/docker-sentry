@@ -29,6 +29,7 @@
 #  SENTRY_MAILGUN_API_KEY
 #  SENTRY_SINGLE_ORGANIZATION
 #  SENTRY_SECRET_KEY
+#  SENTRY_DEFAULT_TIME_ZONE
 from sentry.conf.server import *  # NOQA
 from sentry.utils.types import Bool
 
@@ -83,6 +84,9 @@ SENTRY_USE_BIG_INTS = True
 # Instruct Sentry that this install intends to be run by a single organization
 # and thus various UI optimizations should be enabled.
 SENTRY_SINGLE_ORGANIZATION = Bool(env('SENTRY_SINGLE_ORGANIZATION', True))
+
+# Default time zone for localization in the UI.
+SENTRY_DEFAULT_TIME_ZONE = env('SENTRY_DEFAULT_TIME_ZONE') or 'UTC'
 
 #########
 # Redis #
