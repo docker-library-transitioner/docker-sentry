@@ -27,6 +27,7 @@
 #  SENTRY_ENABLE_EMAIL_REPLIES
 #  SENTRY_SMTP_HOSTNAME
 #  SENTRY_MAILGUN_API_KEY
+#  SENTRY_ALLOW_REGISTRATION
 #  SENTRY_SINGLE_ORGANIZATION
 #  SENTRY_SECRET_KEY
 #  GITHUB_APP_ID
@@ -81,6 +82,9 @@ SENTRY_USE_BIG_INTS = True
 ###########
 # General #
 ###########
+
+# Allow users to create a new account
+SENTRY_FEATURES['auth:register'] = env('SENTRY_ALLOW_REGISTRATION', True)
 
 # Instruct Sentry that this install intends to be run by a single organization
 # and thus various UI optimizations should be enabled.
