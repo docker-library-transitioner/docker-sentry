@@ -33,6 +33,7 @@
 #  GITHUB_API_SECRET
 #  BITBUCKET_CONSUMER_KEY
 #  BITBUCKET_CONSUMER_SECRET
+#  SENTRY_ALLOW_REGISTER
 from sentry.conf.server import *  # NOQA
 
 import os
@@ -285,6 +286,9 @@ if SENTRY_OPTIONS['mail.enable-replies']:
 secret_key = env('SENTRY_SECRET_KEY')
 if not secret_key:
     raise Exception('Error: SENTRY_SECRET_KEY is undefined, run `generate-secret-key` and set to -e SENTRY_SECRET_KEY')
+
+#Allow or not the registration
+SENTRY_FEATURES['auth:register'] = env('SENTRY_ALLOW_REGISTER', True)
 
 if 'SENTRY_RUNNING_UWSGI' not in os.environ and len(secret_key) < 32:
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
