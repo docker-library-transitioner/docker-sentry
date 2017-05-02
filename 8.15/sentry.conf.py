@@ -15,6 +15,7 @@
 #  SENTRY_REDIS_PASSWORD
 #  SENTRY_REDIS_PORT
 #  SENTRY_REDIS_DB
+#  SENTRY_DISABLE_REGISTRATION
 #  SENTRY_MEMCACHED_HOST
 #  SENTRY_MEMCACHED_PORT
 #  SENTRY_FILESTORE_DIR
@@ -278,6 +279,11 @@ else:
 
 if SENTRY_OPTIONS['mail.enable-replies']:
     SENTRY_OPTIONS['mail.reply-hostname'] = env('SENTRY_SMTP_HOSTNAME') or ''
+
+# Configure to allow user can register new account or not.
+# By default, Sentry do allow user to register themselves.
+disable_registration = env('SENTRY_DISABLE_REGISTRATION')
+SENTRY_FEATURES['auth:register'] = False if disable_registration
 
 # If this value ever becomes compromised, it's important to regenerate your
 # SENTRY_SECRET_KEY. Changing this value will result in all current sessions
