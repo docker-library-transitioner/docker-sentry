@@ -33,6 +33,8 @@
 #  GITHUB_API_SECRET
 #  BITBUCKET_CONSUMER_KEY
 #  BITBUCKET_CONSUMER_SECRET
+#  SENTRY_URL_PREFIX
+#  SENTRY_ADMIN_EMAIL
 from sentry.conf.server import *  # NOQA
 
 import os
@@ -295,6 +297,9 @@ if 'SENTRY_RUNNING_UWSGI' not in os.environ and len(secret_key) < 32:
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
 SENTRY_OPTIONS['system.secret-key'] = secret_key
+
+SENTRY_OPTIONS['system.url-prefix'] = env('SENTRY_URL_PREFIX', 'http://localhost')
+SENTRY_OPTIONS['system.admin-email'] = env('SENTRY_ADMIN_EMAIL', 'root@localhost')
 
 if 'GITHUB_APP_ID' in os.environ:
     GITHUB_EXTENDED_PERMISSIONS = ['repo']
