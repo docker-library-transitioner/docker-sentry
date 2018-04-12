@@ -33,6 +33,8 @@
 #  GITHUB_API_SECRET
 #  BITBUCKET_CONSUMER_KEY
 #  BITBUCKET_CONSUMER_SECRET
+#  SENTRY_STATSD_HOST
+#  SENTRY_STATSD_PORT
 from sentry.conf.server import *  # NOQA
 
 import os
@@ -304,3 +306,10 @@ if 'GITHUB_APP_ID' in os.environ:
 if 'BITBUCKET_CONSUMER_KEY' in os.environ:
     BITBUCKET_CONSUMER_KEY = env('BITBUCKET_CONSUMER_KEY')
     BITBUCKET_CONSUMER_SECRET = env('BITBUCKET_CONSUMER_SECRET')
+
+if 'SENTRY_STATSD_HOST' in os.environ or 'SENTRY_STATSD_PORT' in os.environ:
+    SENTRY_METRICS_BACKEND = 'sentry.metrics.statsd.StatsdMetricsBackend'
+    SENTRY_METRICS_OPTIONS = {
+        'host': env('SENTRY_STATSD_HOST', 'localhost'),
+        'port': int(env('SENTRY_STATSD_PORT', 8125)),
+    }

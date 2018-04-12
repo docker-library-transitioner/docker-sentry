@@ -29,6 +29,8 @@
 #  SENTRY_MAILGUN_API_KEY
 #  SENTRY_SINGLE_ORGANIZATION
 #  SENTRY_SECRET_KEY
+#  SENTRY_STATSD_HOST
+#  SENTRY_STATSD_PORT
 from sentry.conf.server import *  # NOQA
 from sentry.utils.types import Bool
 
@@ -292,3 +294,10 @@ if 'SENTRY_RUNNING_UWSGI' not in os.environ and len(secret_key) < 32:
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
 SENTRY_OPTIONS['system.secret-key'] = secret_key
+
+if 'SENTRY_STATSD_HOST' in os.environ or 'SENTRY_STATSD_PORT' in os.environ:
+    SENTRY_METRICS_BACKEND = 'sentry.metrics.statsd.StatsdMetricsBackend'
+    SENTRY_METRICS_OPTIONS = {
+        'host': env('SENTRY_STATSD_HOST', 'localhost'),
+        'port': int(env('SENTRY_STATSD_PORT', 8125)),
+    }
