@@ -1,4 +1,4 @@
-FROM python:2.7.15-slim-jessie
+FROM python:2.7.15-slim-stretch
 
 # add our user and group first to make sure their IDs get assigned consistently
 RUN groupadd -r sentry && useradd -r -m -g sentry sentry
@@ -12,6 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxml2-dev \
         libxslt-dev \
         libyaml-dev \
+        gnupg \
+        dirmngr \
+        libssl-dev \
+        zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Sane defaults for pip
@@ -36,8 +40,8 @@ RUN set -x \
 RUN set -x \
     && export TINI_VERSION=0.18.0 \
     && apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/* \
-    && wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini" \
-    && wget -O /usr/local/bin/tini.asc "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini.asc" \
+    && wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-$(dpkg --print-architecture)" \
+    && wget -O /usr/local/bin/tini.asc "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-$(dpkg --print-architecture).asc" \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 \
     && gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini \
@@ -55,8 +59,11 @@ RUN set -x \
 
 ENV SENTRY_VERSION 9.0.0
 
+COPY symbolic-5.0.2-py2.py3-none-linux_aarch64.whl /usr/src
+COPY semaphore-0.1.1-py2.py3-none-linux_aarch64.whl /usr/src
+
 RUN set -x \
-    && apt-get update && apt-get install -y --no-install-recommends wget g++ && rm -rf /var/lib/apt/lists/* \
+    && apt-get update && apt-get install -y --no-install-recommends build-essential wget g++  && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /usr/src/sentry \
     && wget -O /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl "https://github.com/getsentry/sentry/releases/download/${SENTRY_VERSION}/sentry-${SENTRY_VERSION}-py27-none-any.whl" \
     && wget -O /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl.asc "https://github.com/getsentry/sentry/releases/download/${SENTRY_VERSION}/sentry-${SENTRY_VERSION}-py27-none-any.whl.asc" \
@@ -66,6 +73,13 @@ RUN set -x \
     && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys D8749766A66DD714236A932C3B2D400CE5BBCA60 \
     && gpg --batch --verify /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl.asc /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl \
     && gpg --batch --verify /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl.asc /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl \
+    && dpkgArch="$(uname -m)" \
+    && case "${dpkgArch##*-}" in \
+        aarch64) pip install \
+            /usr/src/symbolic-5.0.2-py2.py3-none-linux_aarch64.whl \
+            /usr/src/semaphore-0.1.1-py2.py3-none-linux_aarch64.whl \
+    ;; \
+    esac \
     && pip install \
         /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl \
         /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl \
