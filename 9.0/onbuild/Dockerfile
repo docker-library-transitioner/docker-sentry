@@ -6,6 +6,12 @@ WORKDIR /usr/src/sentry
 ENV PYTHONPATH /usr/src/sentry
 ONBUILD COPY . /usr/src/sentry
 
+# Hook for installing additional apt-get requirements for plugins
+ONBUILD RUN if [ -s requirements.system ] && grep -vq "^#" < requirements.system; then apt-get update \
+	&& grep -v "^#" < requirements.system | xargs apt-get install -y --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*; \
+	fi
+
 # Hook for installing additional plugins
 ONBUILD RUN if [ -s requirements.txt ]; then pip install -r requirements.txt; fi
 
