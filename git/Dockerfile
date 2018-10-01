@@ -11,8 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libjpeg-dev \
         libpq-dev \
         libxml2-dev \
+        libxmlsec1-dev \
         libxslt-dev \
         libyaml-dev \
+        pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # Sane defaults for pip
