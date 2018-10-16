@@ -31,6 +31,8 @@
 #  SENTRY_SECRET_KEY
 #  SENTRY_STATSD_HOST
 #  SENTRY_STATSD_PORT
+#  SENTRY_DOGSTATSD_HOST
+#  SENTRY_DOGSTATSD_PORT
 from sentry.conf.server import *  # NOQA
 from sentry.utils.types import Bool
 
@@ -300,4 +302,10 @@ if 'SENTRY_STATSD_HOST' in os.environ or 'SENTRY_STATSD_PORT' in os.environ:
     SENTRY_METRICS_OPTIONS = {
         'host': env('SENTRY_STATSD_HOST', 'localhost'),
         'port': int(env('SENTRY_STATSD_PORT', 8125)),
+    }
+elif 'SENTRY_DOGSTATSD_HOST' in os.environ or 'SENTRY_DOGSTATSD_PORT' in os.environ:
+    SENTRY_METRICS_BACKEND = 'sentry.metrics.dogstatsd.DogStatsdMetricsBackend'
+    SENTRY_METRICS_OPTIONS = {
+        'statsd_host': env('SENTRY_DOGSTATSD_HOST', 'localhost'),
+        'statsd_port': int(env('SENTRY_DOGSTATSD_PORT', 8125)),
     }
