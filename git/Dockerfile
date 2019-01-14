@@ -61,7 +61,7 @@ ENV SENTRY_BUILD $SENTRY_BUILD
 
 RUN [ "$SENTRY_BUILD" != '' ] \
     # Install node to build assets
-    && export NODE_VERSION=8.9.1 \
+    && export NODE_VERSION=8.15.0 \
     && export YARN_VERSION=1.3.2 \
     && export GNUPGHOME="$(mktemp -d)" \
     && export NPM_CONFIG_CACHE="$(mktemp -d)" \
