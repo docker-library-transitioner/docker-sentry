@@ -18,8 +18,8 @@ fi
 (( $# == 1 )) || usage
 
 sha="$1"
-[[ $sha =~ ^[a-f0-9]{40}$ ]] || usage
+[[ "$sha" =~ ^[a-f0-9]{40}$ ]] || usage
 
 set -x
-docker build --build-arg SENTRY_BUILD=$sha --rm -t sentry:git git
+docker build --build-arg SENTRY_BUILD="$sha" --rm -t sentry:git git
 docker build --rm -t sentry:git-onbuild git/onbuild
