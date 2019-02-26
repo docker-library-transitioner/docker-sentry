@@ -119,7 +119,7 @@ RUN [ "$SENTRY_BUILD" != '' ] \
       gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
       gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
-    && mkdir -p /usr/local/node && PATH=/usr/local/node/bin:$PATH \
+    && mkdir -p /usr/local/node \
     && rm -rf /var/lib/apt/lists/* \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -128,6 +128,7 @@ RUN [ "$SENTRY_BUILD" != '' ] \
     && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
     && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local/node --strip-components=1 \
     && rm -r "$GNUPGHOME" "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
+    && ln -s /usr/local/node/bin/* /usr/local/bin \
     && npm install -g yarn@$YARN_VERSION \
     \
     && mkdir -p /usr/src/sentry \
@@ -135,9 +136,8 @@ RUN [ "$SENTRY_BUILD" != '' ] \
     && wget -qO - "https://github.com/getsentry/sentry/archive/${SENTRY_BUILD}.tar.gz" | tar -xzf - --strip-components=1 \
     && python setup.py bdist_wheel \
     \
-    # Now remove node since it's not needed anymore in the final container
+    # Clean npm and yarns caches
     && rm -r "$NPM_CONFIG_CACHE" "$YARN_CACHE_FOLDER" \
-    && rm -rf /usr/local/node \
     \
     && pip install dist/*.whl \
     \
