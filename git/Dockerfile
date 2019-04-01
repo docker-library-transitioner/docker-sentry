@@ -55,8 +55,8 @@ ENV SENTRY_BUILD $SENTRY_BUILD
 RUN [ "$SENTRY_BUILD" != '' ] \
     && apt-get update && apt-get install -y --no-install-recommends make g++ wget gpg dirmngr && rm -rf /var/lib/apt/lists/* \
     # Install node to build assets
-    && export NODE_VERSION=8.10.0 \
-    && export YARN_VERSION=1.13.0 \
+    && export NODE_VERSION=8.15.1 \
+    && export YARN_VERSION=1.15.2 \
     && export GNUPGHOME="$(mktemp -d)" \
     && export NPM_CONFIG_CACHE="$(mktemp -d)" \
     && export YARN_CACHE_FOLDER="$(mktemp -d)" \
