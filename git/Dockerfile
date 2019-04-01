@@ -1,12 +1,12 @@
 # Build from any git sha by passing `--build-arg SENTRY_BUILD=<sha>`
-FROM python:2.7.15-slim-jessie
+FROM python:2.7-slim-stretch
 
 # add our user and group first to make sure their IDs get assigned consistently
 RUN groupadd -r sentry && useradd -r -m -g sentry sentry
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        gcc \
         git \
+        gosu \
         libffi-dev \
         libgeoip-dev \
         libjpeg-dev \
@@ -22,30 +22,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV PIP_NO_CACHE_DIR off
 ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
-# grab gosu for easy step-down from root
-RUN set -x \
-    && export GOSU_VERSION=1.11 \
-    && apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/* \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && for key in \
-      B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    ; do \
-      gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
-    done \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true \
-    && apt-get purge -y --auto-remove wget
-
 # grab tini for signal processing and zombie killing
 RUN set -x \
     && export TINI_VERSION=0.18.0 \
-    && apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/* \
+    && apt-get update && apt-get install -y --no-install-recommends wget gpg dirmngr && rm -rf /var/lib/apt/lists/* \
     && wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini" \
     && wget -O /usr/local/bin/tini.asc "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
@@ -57,22 +37,23 @@ RUN set -x \
       gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
     && gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini \
-    && rm -r "$GNUPGHOME" /usr/local/bin/tini.asc \
+    && rm -rf "$GNUPGHOME" /usr/local/bin/tini.asc \
     && chmod +x /usr/local/bin/tini \
     && tini -h \
-    && apt-get purge -y --auto-remove wget
+    && apt-get purge -y --auto-remove wget gpg dirmngr
 
 # Support for RabbitMQ
 RUN set -x \
-    && apt-get update && apt-get install -y --no-install-recommends make && rm -rf /var/lib/apt/lists/* \
+    && apt-get update && apt-get install -y --no-install-recommends gcc make && rm -rf /var/lib/apt/lists/* \
     && pip install librabbitmq==1.6.1 \
     && python -c 'import librabbitmq' \
-    && apt-get purge -y --auto-remove make
+    && apt-get purge -y --auto-remove gcc make
 
 ARG SENTRY_BUILD=master
 ENV SENTRY_BUILD $SENTRY_BUILD
 
 RUN [ "$SENTRY_BUILD" != '' ] \
+    && apt-get update && apt-get install -y --no-install-recommends make g++ wget gpg dirmngr && rm -rf /var/lib/apt/lists/* \
     # Install node to build assets
     && export NODE_VERSION=8.10.0 \
     && export YARN_VERSION=1.13.0 \
@@ -99,8 +80,6 @@ RUN [ "$SENTRY_BUILD" != '' ] \
       gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
     && mkdir -p /usr/local/node && PATH=/usr/local/node/bin:$PATH \
-    && apt-get update && apt-get install -y --no-install-recommends make g++ wget \
-    && rm -rf /var/lib/apt/lists/* \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --verify SHASUMS256.txt.asc \
@@ -120,7 +99,7 @@ RUN [ "$SENTRY_BUILD" != '' ] \
 
     && pip install dist/*.whl \
 
-    && apt-get purge -y --auto-remove make g++ wget \
+    && apt-get purge -y --auto-remove make g++ wget gpg dirmngr \
     && rm -rf /usr/src/sentry
 
 ENV SENTRY_CONF=/etc/sentry \
