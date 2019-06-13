@@ -7,6 +7,7 @@
 #  SENTRY_DB_NAME
 #  SENTRY_DB_USER
 #  SENTRY_DB_PASSWORD
+#  SENTRY_DB_SCHEMA
 #  SENTRY_RABBITMQ_HOST
 #  SENTRY_RABBITMQ_USERNAME
 #  SENTRY_RABBITMQ_PASSWORD
@@ -63,6 +64,10 @@ if postgres:
                 env('SENTRY_DB_PASSWORD')
                 or env('POSTGRES_ENV_POSTGRES_PASSWORD')
                 or ''
+            ),
+            'SCHEMA': (
+                env('SENTRY_DB_SCHEMA')
+                or 'public'
             ),
             'HOST': postgres,
             'PORT': (
