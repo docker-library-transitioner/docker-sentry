@@ -88,9 +88,7 @@ ENV SENTRY_BUILD $SENTRY_BUILD
 RUN [ "$SENTRY_BUILD" != '' ] \
     # Install node to build assets
     && export NODE_VERSION=8.15.1 \
-    && export YARN_VERSION=1.13.0 \
     && export GNUPGHOME="$(mktemp -d)" \
-    && export NPM_CONFIG_CACHE="$(mktemp -d)" \
     && export YARN_CACHE_FOLDER="$(mktemp -d)" \
     && buildDeps=" \
         make \
@@ -128,7 +126,6 @@ RUN [ "$SENTRY_BUILD" != '' ] \
     && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
     && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local/node --strip-components=1 \
     && rm -r "$GNUPGHOME" "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
-    && npm install -g yarn@$YARN_VERSION \
     \
     && mkdir -p /usr/src/sentry \
     && cd /usr/src/sentry \
@@ -136,7 +133,7 @@ RUN [ "$SENTRY_BUILD" != '' ] \
     && python setup.py bdist_wheel \
     \
     # Now remove node since it's not needed anymore in the final container
-    && rm -r "$NPM_CONFIG_CACHE" "$YARN_CACHE_FOLDER" \
+    && rm -r "$YARN_CACHE_FOLDER" \
     && rm -rf /usr/local/node \
     \
     && pip install dist/*.whl \
