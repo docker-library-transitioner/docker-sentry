@@ -76,16 +76,11 @@ RUN set -x \
 
 # Support for RabbitMQ and GeoIP
 RUN set -x \
-    && apt-get update && apt-get install -y --no-install-recommends make && rm -rf /var/lib/apt/lists/* \
+    && apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
     && pip install librabbitmq==1.6.1 maxminddb==1.4.1 \
     && python -c 'import librabbitmq' \
     && python -c 'import maxminddb' \
-    && apt-get purge -y --auto-remove make
-
-ARG SENTRY_BUILD=master
-ENV SENTRY_BUILD $SENTRY_BUILD
-
-RUN [ "$SENTRY_BUILD" != '' ] \
+    && apt-get purge -y --auto-remove make \
     # Install node to build assets
     && export NODE_VERSION=8.15.1 \
     && export GNUPGHOME="$(mktemp -d)" \
@@ -97,7 +92,6 @@ RUN [ "$SENTRY_BUILD" != '' ] \
         gnupg \
         wget \
     " \
-    && apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
     # gpg keys listed at https://github.com/nodejs/node
     && set -ex \
     && for key in \
@@ -118,7 +112,6 @@ RUN [ "$SENTRY_BUILD" != '' ] \
       gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
     && mkdir -p /usr/local/node && PATH=/usr/local/node/bin:$PATH \
-    && rm -rf /var/lib/apt/lists/* \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --verify SHASUMS256.txt.asc \
@@ -126,8 +119,12 @@ RUN [ "$SENTRY_BUILD" != '' ] \
     && grep " node-v$NODE_VERSION-linux-x64.tar.gz\$" SHASUMS256.txt.asc | sha256sum -c - \
     && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local/node --strip-components=1 \
     && rm -r "$GNUPGHOME" "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
-    \
-    && mkdir -p /usr/src/sentry \
+    && mkdir -p /usr/src/sentry
+
+ARG SENTRY_BUILD=master
+ENV SENTRY_BUILD $SENTRY_BUILD
+
+RUN [ "$SENTRY_BUILD" != '' ]
     && cd /usr/src/sentry \
     && wget -qO - "https://github.com/getsentry/sentry/archive/${SENTRY_BUILD}.tar.gz" | tar -xzf - --strip-components=1 \
     && python setup.py bdist_wheel \
