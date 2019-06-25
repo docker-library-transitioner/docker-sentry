@@ -124,7 +124,7 @@ RUN set -x \
 ARG SENTRY_BUILD=master
 ENV SENTRY_BUILD $SENTRY_BUILD
 
-RUN [ "$SENTRY_BUILD" != '' ]
+RUN [ "$SENTRY_BUILD" != '' ] \
     && cd /usr/src/sentry \
     && wget -qO - "https://github.com/getsentry/sentry/archive/${SENTRY_BUILD}.tar.gz" | tar -xzf - --strip-components=1 \
     && python setup.py bdist_wheel \
