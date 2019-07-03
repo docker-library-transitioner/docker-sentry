@@ -1,4 +1,4 @@
-FROM sentry:git
+FROM getsentry/sentry:git
 
 WORKDIR /usr/src/sentry
 

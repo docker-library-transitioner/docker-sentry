@@ -18,9 +18,15 @@ script:
   - docker build -t "$image" .
   - ~/official-images/test/run.sh "$image"
   - $TRAVIS_BUILD_DIR/test/run.sh "$image"
-  - if [ -f onbuild/Dockerfile ]; then docker build -t "$image-onbuild" onbuild; fi
-  - if [ -f onbuild/Dockerfile ]; then ~/official-images/test/run.sh "$image-onbuild"; fi
-  - if [ -f onbuild/Dockerfile ]; then $TRAVIS_BUILD_DIR/test/run.sh "$image-onbuild"; fi
+  - docker build -t "$image-onbuild" onbuild
+  - ~/official-images/test/run.sh "$image-onbuild"
+  - $TRAVIS_BUILD_DIR/test/run.sh "$image-onbuild"
+  - >
+    if [ "$VERSION" == "git" -a "$TRAVIS_PULL_REQUEST" == "false" -a "$TRAVIS_BRANCH" == "master" ]; then
+      echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
+      docker push "$image";
+      docker push "$image-onbuild";
+    fi
 
 after_script:
   - docker images
