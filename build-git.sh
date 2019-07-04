@@ -17,5 +17,5 @@ sha="$1"
 [[ $sha =~ ^[a-f0-9]{40}$ ]] || usage
 
 set -x
-docker build --build-arg SENTRY_BUILD=$sha --rm -t sentry:git git
-docker build --rm -t sentry:git-onbuild git/onbuild
+docker build --build-arg SENTRY_BUILD=$sha --rm -t getsentry/sentry:git git
+docker build --rm -t getsentry/sentry:git-onbuild git/onbuild
