@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         libffi-dev \
         libjpeg-dev \
+        libmaxminddb-dev \
         libpq-dev \
         libxml2-dev \
         libxmlsec1-dev \
@@ -77,7 +78,9 @@ RUN set -x \
     && apt-get update && apt-get install -y --no-install-recommends make && rm -rf /var/lib/apt/lists/* \
     && pip install librabbitmq==1.6.1 maxminddb==1.4.1 \
     && python -c 'import librabbitmq' \
-    && python -c 'import maxminddb' \
+    # Fully verify that the C extension is correctly installed, it unfortunately
+    # requires a full check into maxminddb.extension.Reader
+    && python -c 'import maxminddb.extension; maxminddb.extension.Reader' \
     && apt-get purge -y --auto-remove make
 
 ENV SENTRY_VERSION 9.1.1
