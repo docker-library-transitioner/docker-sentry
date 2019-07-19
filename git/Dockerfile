@@ -11,7 +11,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libgeoip-dev \
         libjpeg-dev \
         libmaxminddb-dev \
-        libpq-dev \
         libxml2-dev \
         libxmlsec1-dev \
         libxslt-dev \
@@ -94,7 +93,6 @@ RUN [ "$SENTRY_BUILD" != '' ] \
     && export GNUPGHOME="$(mktemp -d)" \
     && export YARN_CACHE_FOLDER="$(mktemp -d)" \
     && buildDeps=" \
-        make \
         g++ \
         dirmngr \
         gnupg \
