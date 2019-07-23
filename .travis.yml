@@ -2,7 +2,6 @@ language: bash
 services: docker
 
 env:
-  - VERSION=9.0
   - VERSION=9.1
 
 install:
