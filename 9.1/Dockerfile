@@ -37,7 +37,7 @@ RUN set -x \
       B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     ; do \
       gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://pool.sks-keyservers.net --recv-keys "$key" || \
+      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
       gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
@@ -63,7 +63,7 @@ RUN set -x \
       595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 \
     ; do \
       gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://pool.sks-keyservers.net --recv-keys "$key" || \
+      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
       gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
     && gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini \
@@ -105,7 +105,7 @@ RUN set -x \
       4EBA9A94CC7DC65988662672C2F03C406631065D \
     ; do \
       gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://pool.sks-keyservers.net --recv-keys "$key" || \
+      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
       gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
     && gpg --batch --verify /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl.asc /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl \
