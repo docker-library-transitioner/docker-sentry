@@ -90,63 +90,49 @@ ENV PIP_NO_CACHE_DIR=off \
 COPY --from=sdist /dist/*.whl /tmp/dist/
 RUN gosu nobody true \
     && set -x \
-    && uwsgiBuildDeps=" \
+    && buildDeps="" \
+    # uwsgi
+    && buildDeps="$buildDeps \
       gcc \
       g++ \
     " \
-    && maxminddbBuildDeps=" \
+    # maxminddb
+    && buildDeps="$buildDeps \
       libmaxminddb-dev \
     "\
-    && libRabbitmqBuildDeps=" \
+    # librabbitmq
+    && buildDeps="$buildDeps \
       make \
-    " \
-    && buildDeps=" \
-      $uwsgiBuildDeps \
-      $maxminddbBuildDeps \
-      $libRabbitmqBuildDeps \
     " \
     && apt-get update \
     && apt-get install -y --no-install-recommends $buildDeps \
     && pip install /tmp/dist/*.whl librabbitmq==1.6.1 maxminddb==1.4.1 \
     && rm -rf /tmp/dist \
     && apt-get purge -y --auto-remove $buildDeps \
-    \
-    && pillowDeps=" \
+    # We install run-time dependencies strictly after
+    # build dependencies to prevent accidental collusion.
+    # These are also installed last as they are needed
+    # during container run and can have the same deps w/
+    # build deps such as maxminddb.
+    && apt-get install -y --no-install-recommends \
+      # pillow
       libjpeg-dev \
-    " \
-    && rustDeps=" \
+      # rust bindings
       libffi-dev \
-    " \
-    && maxminddbDeps=" \
-       libmaxminddb-dev \
-    " \
-    && uwsgiDeps=" \
+      # maxminddb bindings
+      libmaxminddb-dev \
+      # uwsgi needs this run-time
       libxml2-dev \
-    " \
-    && geoipDeps=" \
+      # geoip bindings
       libgeoip-dev \
-    " \
-    && samlDeps=" \
+      # SAML needs these run-time
       libxmlsec1-dev \
       libxslt-dev \
-    " \
-    && pyyamlDeps=" \
+      # pyyaml needs this run-time
       libyaml-dev \
-    " \
-    && otherRuntimeDeps=" \
+      # other
       pkg-config \
-    " \
-    && runtimeDeps=" \
-      $pillowDeps \
-      $rustDeps \
-      $maxminddbDeps \
-      $uwsgiDeps \
-      $geoipDeps \
-      $samlDeps \
-      $pyyamlDeps \
-      $otherRuntimeDeps \
-    " \
-    && apt-get install -y --no-install-recommends $runtimeDeps \
+    \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && python -c 'import librabbitmq' \
@@ -155,11 +141,10 @@ RUN gosu nobody true \
     && python -c 'import maxminddb.extension; maxminddb.extension.Reader' \
     && mkdir -p $SENTRY_CONF && mkdir -p $SENTRY_FILESTORE_DIR
 
-COPY docker-entrypoint.sh /entrypoint.sh
-COPY sentry.conf.py config.yml $SENTRY_CONF/
+COPY docker-entrypoint.sh sentry.conf.py config.yml $SENTRY_CONF/
 
 EXPOSE 9000
 VOLUME /var/lib/sentry/files
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT exec $SENTRY_CONF/docker-entrypoint.sh $0 $@
 CMD ["run", "web"]
