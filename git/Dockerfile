@@ -106,7 +106,11 @@ RUN gosu nobody true \
     " \
     && apt-get update \
     && apt-get install -y --no-install-recommends $buildDeps \
-    && pip install /tmp/dist/*.whl librabbitmq==1.6.1 maxminddb==1.4.1 \
+    && pip install /tmp/dist/*.whl \
+    # Separate these due to https://git.io/fjyz6
+    # Otherwise librabbitmq will install the latest amqp version,
+    # violating kombu's amqp<2.0 constraint.
+    && pip install librabbitmq==1.6.1 maxminddb==1.4.1 \
     && rm -rf /tmp/dist \
     && apt-get purge -y --auto-remove $buildDeps \
     # We install run-time dependencies strictly after
