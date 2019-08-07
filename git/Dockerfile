@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Sane defaults for pip
 ENV PIP_NO_CACHE_DIR off
 ENV PIP_DISABLE_PIP_VERSION_CHECK on
+ENV PIP_USE_PEP517 false
 
 # grab gosu for easy step-down from root
 RUN set -x \
