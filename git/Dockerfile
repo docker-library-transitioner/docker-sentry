@@ -1,5 +1,5 @@
 # Build from any git sha by passing `--build-arg SENTRY_BUILD=<sha>`
-FROM python:2.7.16-slim-stretch as sdist
+FROM python:2.7.16-slim-buster as sdist
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     # Needed for GPG
@@ -73,7 +73,7 @@ RUN [ "$SENTRY_BUILD" != '' ] \
 
 
 # This is the image to be run
-FROM python:2.7.16-slim-stretch
+FROM python:2.7.16-slim-buster
 
 # add our user and group first to make sure their IDs get assigned consistently
 RUN groupadd -r sentry && useradd -r -m -g sentry sentry
