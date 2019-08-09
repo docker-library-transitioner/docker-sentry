@@ -83,9 +83,12 @@ COPY --from=sdist /usr/local/bin/gosu /usr/local/bin/tini /usr/local/bin/
 # Sane defaults for pip
 ENV PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-# Sentry config params
+    # Sentry config params
     SENTRY_CONF=/etc/sentry \
-    SENTRY_FILESTORE_DIR=/var/lib/sentry/files
+    SENTRY_FILESTORE_DIR=/var/lib/sentry/files \
+    # Disable some unused uWSGI features, saving dependencies
+    # Thank to https://stackoverflow.com/a/25260588/90297
+    UWSGI_PROFILE_OVERRIDE=ssl=false;xml=false;routing=false
 
 COPY --from=sdist /dist/*.whl /tmp/dist/
 RUN gosu nobody true \
@@ -125,8 +128,6 @@ RUN gosu nobody true \
       libffi-dev \
       # maxminddb bindings
       libmaxminddb-dev \
-      # uwsgi needs this run-time
-      libxml2-dev \
       # geoip bindings
       libgeoip-dev \
       # SAML needs these run-time
