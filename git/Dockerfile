@@ -92,8 +92,7 @@ ENV PIP_NO_CACHE_DIR=off \
     UWSGI_PROFILE_OVERRIDE=ssl=false;xml=false;routing=false
 
 COPY --from=sdist /dist/*.whl /tmp/dist/
-RUN gosu nobody true \
-    && set -x \
+RUN set -x \
     && buildDeps="" \
     # uwsgi
     && buildDeps="$buildDeps \
