@@ -52,7 +52,6 @@ RUN set -x \
 
 # Get and set up Node for front-end asset building
 ENV NODE_VERSION 8.16.0
-
 RUN wget "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --verify SHASUMS256.txt.asc \
@@ -61,6 +60,7 @@ RUN wget "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.t
     && rm -r "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc
 
 ARG SENTRY_BUILD=master
+ENV SENTRY_BUILD $SENTRY_BUILD
 RUN [ "$SENTRY_BUILD" != '' ] \
     && mkdir -p /usr/src/sentry \
     && cd /usr/src/sentry \
