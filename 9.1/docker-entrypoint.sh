@@ -18,7 +18,7 @@ if [ "$1" = 'sentry' ]; then
 	set -- tini -- "$@"
 	if [ "$(id -u)" = '0' ]; then
 		mkdir -p "$SENTRY_FILESTORE_DIR"
-		find "$SENTRY_FILESTORE_DIR" ! -user sentry -exec chown -R sentry {} \;
+		find "$SENTRY_FILESTORE_DIR" ! -user sentry -exec chown sentry {} \;
 		set -- gosu sentry "$@"
 	fi
 fi
