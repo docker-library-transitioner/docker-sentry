@@ -128,8 +128,6 @@ RUN set -x \
       libffi-dev \
       # maxminddb bindings
       libmaxminddb-dev \
-      # geoip bindings
-      libgeoip-dev \
       # SAML needs these run-time
       libxmlsec1-dev \
       libxslt-dev \
