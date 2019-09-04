@@ -7,7 +7,7 @@ usage () {
 }
 
 if [ "$#" = 0 ]; then
-    set -- "$(curl -sSL 'https://api.github.com/repos/getsentry/sentry/git/refs/heads/master' | awk 'BEGIN { RS=",|:{\n"; FS="\""; } $2 == "sha" { print $4 }')"
+    set -- "$(curl -sSL 'https://api.github.com/repos/getsentry/sentry/git/refs/heads/master' | grep -Po '(?<=\"sha\": \")([a-f0-9]{5,40})(?=\",?)')"
     echo "No sha specified, using refs/head/master ($1)"
 fi
 
