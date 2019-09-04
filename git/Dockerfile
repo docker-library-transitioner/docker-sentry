@@ -51,7 +51,7 @@ RUN set -x \
     && chmod +x /usr/local/bin/tini
 
 # Get and set up Node for front-end asset building
-ENV NODE_VERSION 8.16.0
+ENV NODE_VERSION 10.16.3
 RUN wget "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
     && wget "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --verify SHASUMS256.txt.asc \
