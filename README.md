@@ -1,3 +1,7 @@
+# DEPRECATED
+
+The up-to-date contents of this repo now lives under [getsentry/sentry](https://github.com/getsentry/sentry/tree/master/docker) and the on-premise installation lives under [getsentry/onpremise](https://github.com/getsentry/onpremise). Any issues should be reported in these repositories. This one is for visibility into the older 9.1 release.
+
 # About this Repo [![Build Status][build-status-image]][build-status-url]
 
 This is the Git repo of the official Docker image for [sentry](https://registry.hub.docker.com/_/sentry/). See the
